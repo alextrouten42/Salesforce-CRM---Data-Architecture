@@ -1,0 +1,651 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, sans-serif); }
+
+.crm-wrap { padding: 1rem 0; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin-bottom: 8px;
+}
+
+.tab-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 20px;
+  border: 0.5px solid var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab.active {
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+  border-color: transparent;
+  font-weight: 500;
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ---- OVERVIEW PANEL ---- */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.obj-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+}
+.obj-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.obj-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.obj-icon.blue { background: var(--color-background-info); color: var(--color-text-info); }
+.obj-icon.teal { background: #E1F5EE; color: #0F6E56; }
+.obj-icon.purple { background: #EEEDFE; color: #534AB7; }
+.obj-icon.amber { background: #FAEEDA; color: #854F0B; }
+.obj-icon.coral { background: #FAECE7; color: #993C1D; }
+.obj-icon.pink { background: #FBEAF0; color: #993556; }
+
+.obj-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.obj-sub { font-size: 11px; color: var(--color-text-tertiary); }
+.obj-fields { list-style: none; }
+.obj-fields li {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 3px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.obj-fields li:last-child { border-bottom: none; }
+.field-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.fd-blue { background: #378ADD; }
+.fd-teal { background: #1D9E75; }
+.fd-purple { background: #7F77DD; }
+.fd-amber { background: #BA7517; }
+.fd-coral { background: #D85A30; }
+.fd-pink { background: #D4537E; }
+
+.flow-arrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+.flow-arrow-row svg { color: var(--color-text-tertiary); }
+
+/* ---- LIFECYCLE PANEL ---- */
+.lifecycle-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+.stage-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+.stage-cell {
+  flex: 1;
+  min-width: 90px;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-right: none;
+  padding: 10px 8px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.stage-cell:last-child { border-right: 0.5px solid var(--color-border-tertiary); }
+.stage-cell:hover { background: var(--color-background-secondary); }
+.stage-cell:first-child { border-radius: var(--border-radius-md) 0 0 var(--border-radius-md); }
+.stage-cell:last-child { border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+
+.stage-num {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  margin-bottom: 4px;
+}
+.stage-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+.stage-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.stage-cell.s-blue { border-top: 2px solid #378ADD; }
+.stage-cell.s-teal { border-top: 2px solid #1D9E75; }
+.stage-cell.s-purple { border-top: 2px solid #7F77DD; }
+.stage-cell.s-amber { border-top: 2px solid #BA7517; }
+.stage-cell.s-coral { border-top: 2px solid #D85A30; }
+.stage-cell.s-green { border-top: 2px solid #639922; }
+.stage-cell.s-gray { border-top: 2px solid #888780; }
+
+.detail-box {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  min-height: 52px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+/* ---- AUTOMATION PANEL ---- */
+.auto-list { display: flex; flex-direction: column; gap: 10px; }
+.auto-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.auto-card:hover { border-color: var(--color-border-secondary); }
+.trigger-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tp-blue { background: #E6F1FB; color: #185FA5; }
+.tp-teal { background: #E1F5EE; color: #0F6E56; }
+.tp-amber { background: #FAEEDA; color: #854F0B; }
+.tp-purple { background: #EEEDFE; color: #534AB7; }
+.tp-coral { background: #FAECE7; color: #993C1D; }
+
+.auto-content .auto-trigger { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 2px; }
+.auto-content .auto-action { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.auto-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: var(--color-background-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+
+/* ---- SECURITY PANEL ---- */
+.sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.sec-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+}
+.sec-card-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--color-text-primary); }
+.sec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 5px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  color: var(--color-text-secondary);
+}
+.sec-row:last-child { border-bottom: none; }
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+}
+.sd-green { background: #639922; }
+.sd-amber { background: #BA7517; }
+.sd-red { background: #E24B4A; }
+
+/* ---- DASHBOARD PANEL ---- */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.metric-card {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 12px;
+}
+.metric-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+.chart-wrap {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.chart-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 12px; }
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.bar-label { font-size: 11px; color: var(--color-text-secondary); width: 90px; flex-shrink: 0; text-align: right; }
+.bar-track { flex: 1; height: 10px; background: var(--color-background-secondary); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; }
+.bar-count { font-size: 11px; color: var(--color-text-tertiary); width: 28px; flex-shrink: 0; }
+
+@media (max-width: 500px) {
+  .overview-grid { grid-template-columns: 1fr 1fr; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .sec-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="crm-wrap">
+  <div class="section-label">VPEd Salesforce CRM — Data Architecture</div>
+
+  <div class="tab-row">
+    <div class="tab active" onclick="switchTab('overview')">Object model</div>
+    <div class="tab" onclick="switchTab('lifecycle')">Lifecycle stages</div>
+    <div class="tab" onclick="switchTab('automation')">Automation flows</div>
+    <div class="tab" onclick="switchTab('security')">Security & HIPAA</div>
+    <div class="tab" onclick="switchTab('dashboard')">Dashboards</div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="panel active" id="panel-overview">
+    <div class="section-label" style="margin-bottom:12px">Core Salesforce objects mapped to VPEd</div>
+    <div class="overview-grid">
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon blue">🏛</div>
+          <div><div class="obj-title">Accounts</div><div class="obj-sub">Universities</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-blue"></span>Program status picklist</li>
+          <li><span class="field-dot fd-blue"></span>Pilot start date</li>
+          <li><span class="field-dot fd-blue"></span>Renewal date</li>
+          <li><span class="field-dot fd-blue"></span>Primary contact (Supervisor)</li>
+          <li><span class="field-dot fd-blue"></span>Active student count</li>
+        </ul>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon teal">👤</div>
+          <div><div class="obj-title">Contacts</div><div class="obj-sub">Students & supervisors</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-teal"></span>Role (Student / Supervisor)</li>
+          <li><span class="field-dot fd-teal"></span>Student status picklist</li>
+          <li><span class="field-dot fd-teal"></span>Linked Account (university)</li>
+          <li><span class="field-dot fd-teal"></span>Match date</li>
+          <li><span class="field-dot fd-teal"></span>Sessions completed</li>
+        </ul>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon purple">🧑‍⚕️</div>
+          <div><div class="obj-title">Patients</div><div class="obj-sub">Custom object</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-purple"></span>Patient ID (de-identified)</li>
+          <li><span class="field-dot fd-purple"></span>Availability windows</li>
+          <li><span class="field-dot fd-purple"></span>Condition/specialty area</li>
+          <li><span class="field-dot fd-purple"></span>Matched student lookup</li>
+          <li><span class="field-dot fd-purple"></span>Session history</li>
+        </ul>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon amber">🔗</div>
+          <div><div class="obj-title">Matches</div><div class="obj-sub">Custom object</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-amber"></span>Student lookup</li>
+          <li><span class="field-dot fd-amber"></span>Patient lookup</li>
+          <li><span class="field-dot fd-amber"></span>Supervisor lookup</li>
+          <li><span class="field-dot fd-amber"></span>Match date</li>
+          <li><span class="field-dot fd-amber"></span>Match status</li>
+        </ul>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon coral">📋</div>
+          <div><div class="obj-title">Sessions</div><div class="obj-sub">Custom object</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-coral"></span>Related match lookup</li>
+          <li><span class="field-dot fd-coral"></span>Scheduled date/time</li>
+          <li><span class="field-dot fd-coral"></span>Session status</li>
+          <li><span class="field-dot fd-coral"></span>Duration (minutes)</li>
+          <li><span class="field-dot fd-coral"></span>Outcome notes</li>
+        </ul>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-header">
+          <div class="obj-icon pink">⭐</div>
+          <div><div class="obj-title">Feedback</div><div class="obj-sub">Custom object</div></div>
+        </div>
+        <ul class="obj-fields">
+          <li><span class="field-dot fd-pink"></span>Related session lookup</li>
+          <li><span class="field-dot fd-pink"></span>Student rating (1–5)</li>
+          <li><span class="field-dot fd-pink"></span>Patient rating (1–5)</li>
+          <li><span class="field-dot fd-pink"></span>Supervisor rating (1–5)</li>
+          <li><span class="field-dot fd-pink"></span>Testimonial (approval flag)</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="section-label" style="margin-bottom:10px">How data flows between objects</div>
+    <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;">
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="background:#E6F1FB;color:#185FA5;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;">University (Account)</div>
+          <svg width="24" height="16" viewBox="0 0 24 16"><path d="M4 8h12M14 4l6 4-6 4" stroke="var(--color-text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="background:#E1F5EE;color:#0F6E56;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;">Student (Contact)</div>
+          <svg width="24" height="16" viewBox="0 0 24 16"><path d="M4 8h12M14 4l6 4-6 4" stroke="var(--color-text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="background:#EEEDFE;color:#534AB7;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;">Match (Custom)</div>
+          <svg width="24" height="16" viewBox="0 0 24 16"><path d="M4 8h12M14 4l6 4-6 4" stroke="var(--color-text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="background:#FAECE7;color:#993C1D;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;">Session (Custom)</div>
+          <svg width="24" height="16" viewBox="0 0 24 16"><path d="M4 8h12M14 4l6 4-6 4" stroke="var(--color-text-tertiary)" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="background:#FBEAF0;color:#993556;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;">Feedback (Custom)</div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--color-text-tertiary);line-height:1.6;">
+        Patient records are linked via the Match object — keeping PHI isolated from the student-university relationship chain. Feedback is always child to a completed Session.
+      </div>
+    </div>
+  </div>
+
+  <!-- LIFECYCLE -->
+  <div class="panel" id="panel-lifecycle">
+
+    <div class="lifecycle-title">University pipeline stages</div>
+    <div class="stage-row" id="uni-stages">
+      <div class="stage-cell s-gray" onclick="showDetail('uni','prospect','Early interest identified — no contact yet.')">
+        <div class="stage-num">1</div><div class="stage-name">Prospect</div>
+        <div class="stage-badge" style="background:#F1EFE8;color:#5F5E5A;">Lead</div>
+      </div>
+      <div class="stage-cell s-blue" onclick="showDetail('uni','contacted','Initial outreach made. Awaiting response or demo scheduling.')">
+        <div class="stage-num">2</div><div class="stage-name">Contacted</div>
+        <div class="stage-badge" style="background:#E6F1FB;color:#185FA5;">Active</div>
+      </div>
+      <div class="stage-cell s-blue" onclick="showDetail('uni','demo','Demo call completed. Decision pending.')">
+        <div class="stage-num">3</div><div class="stage-name">Demo scheduled</div>
+        <div class="stage-badge" style="background:#E6F1FB;color:#185FA5;">Active</div>
+      </div>
+      <div class="stage-cell s-amber" onclick="showDetail('uni','pilot','Pilot program running. Automation notifies team for onboarding tasks.')">
+        <div class="stage-num">4</div><div class="stage-name">Pilot</div>
+        <div class="stage-badge" style="background:#FAEEDA;color:#854F0B;">⚡ Auto-notify</div>
+      </div>
+      <div class="stage-cell s-teal" onclick="showDetail('uni','active','Full active partnership. Students and sessions are live.')">
+        <div class="stage-num">5</div><div class="stage-name">Active</div>
+        <div class="stage-badge" style="background:#E1F5EE;color:#0F6E56;">Live</div>
+      </div>
+      <div class="stage-cell s-purple" onclick="showDetail('uni','renewal','Contract renewal window. Task auto-created for account manager.')">
+        <div class="stage-num">6</div><div class="stage-name">Renewal</div>
+        <div class="stage-badge" style="background:#EEEDFE;color:#534AB7;">⚡ Auto-task</div>
+      </div>
+      <div class="stage-cell s-gray" onclick="showDetail('uni','inactive','Inactive. Historical record retained.')">
+        <div class="stage-num">7</div><div class="stage-name">Inactive</div>
+        <div class="stage-badge" style="background:#F1EFE8;color:#5F5E5A;">Archived</div>
+      </div>
+    </div>
+    <div class="detail-box" id="detail-uni">Click any stage above to see what happens at that step.</div>
+
+    <div class="lifecycle-title" style="margin-top:20px">Student status stages</div>
+    <div class="stage-row" id="stu-stages">
+      <div class="stage-cell s-gray" onclick="showStudentDetail('inquiry','Student has expressed interest. Contact record created.')">
+        <div class="stage-num">1</div><div class="stage-name">Inquiry</div>
+        <div class="stage-badge" style="background:#F1EFE8;color:#5F5E5A;">New</div>
+      </div>
+      <div class="stage-cell s-blue" onclick="showStudentDetail('applied','Application submitted. Staff review required.')">
+        <div class="stage-num">2</div><div class="stage-name">Applied</div>
+        <div class="stage-badge" style="background:#E6F1FB;color:#185FA5;">Review</div>
+      </div>
+      <div class="stage-cell s-teal" onclick="showStudentDetail('qualified','Student meets all criteria. Match Review task auto-created for staff.')">
+        <div class="stage-num">3</div><div class="stage-name">Qualified</div>
+        <div class="stage-badge" style="background:#E1F5EE;color:#0F6E56;">⚡ Auto-task</div>
+      </div>
+      <div class="stage-cell s-amber" onclick="showStudentDetail('awaiting','Awaiting patient match. Alert fires if 7+ days pass without a match.')">
+        <div class="stage-num">4</div><div class="stage-name">Awaiting match</div>
+        <div class="stage-badge" style="background:#FAEEDA;color:#854F0B;">⚡ 7-day alert</div>
+      </div>
+      <div class="stage-cell s-purple" onclick="showStudentDetail('matched','Patient match confirmed. Match record created and linked.')">
+        <div class="stage-num">5</div><div class="stage-name">Matched</div>
+        <div class="stage-badge" style="background:#EEEDFE;color:#534AB7;">Paired</div>
+      </div>
+      <div class="stage-cell s-coral" onclick="showStudentDetail('scheduled','Session scheduled. Calendar event and confirmation sent.')">
+        <div class="stage-num">6</div><div class="stage-name">Scheduled</div>
+        <div class="stage-badge" style="background:#FAECE7;color:#993C1D;">Upcoming</div>
+      </div>
+      <div class="stage-cell s-green" onclick="showStudentDetail('completed','Session completed. Feedback survey auto-sent to all parties.')">
+        <div class="stage-num">7</div><div class="stage-name">Completed</div>
+        <div class="stage-badge" style="background:#EAF3DE;color:#3B6D11;">⚡ Survey sent</div>
+      </div>
+    </div>
+    <div class="detail-box" id="detail-stu">Click any stage above to see what happens at that step.</div>
+  </div>
+
+  <!-- AUTOMATION -->
+  <div class="panel" id="panel-automation">
+    <div class="section-label" style="margin-bottom:12px">Salesforce Flow Builder — automated workflows</div>
+    <div class="auto-list">
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-teal">When student → Qualified</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Contact status picklist changes to "Qualified"</div>
+          <div class="auto-action">Auto-create Match Review task and assign to staff queue</div>
+        </div>
+        <div class="auto-icon">📋</div>
+      </div>
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-coral">When session → Completed</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Session record status = "Completed"</div>
+          <div class="auto-action">Send feedback survey to student, patient, and supervisor via email</div>
+        </div>
+        <div class="auto-icon">📧</div>
+      </div>
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-amber">When university → Pilot</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Account stage changes to "Pilot"</div>
+          <div class="auto-action">Notify onboarding team and create setup task checklist</div>
+        </div>
+        <div class="auto-icon">🔔</div>
+      </div>
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-purple">Awaiting match — 7+ days</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Scheduled flow checks daily — match date null AND status = "Awaiting"</div>
+          <div class="auto-action">Alert administrator to intervene and escalate for manual match review</div>
+        </div>
+        <div class="auto-icon">⚠️</div>
+      </div>
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-blue">University renewal window</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Renewal date within 30 days</div>
+          <div class="auto-action">Create renewal task for account manager with contract summary</div>
+        </div>
+        <div class="auto-icon">📅</div>
+      </div>
+
+      <div class="auto-card">
+        <div class="trigger-pill tp-teal">Feedback approved</div>
+        <div class="auto-content">
+          <div class="auto-trigger">Trigger: Testimonial approval flag = True on Feedback record</div>
+          <div class="auto-action">Flag testimonial for marketing review and archive with session record</div>
+        </div>
+        <div class="auto-icon">⭐</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="panel" id="panel-security">
+    <div class="section-label" style="margin-bottom:12px">HIPAA-aligned security controls in Salesforce</div>
+    <div class="sec-grid">
+
+      <div class="sec-card">
+        <div class="sec-card-title">Profiles & permission sets</div>
+        <div class="sec-row"><span>VPEd Admin</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>Staff (matcher)</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>Supervisor</span><span class="status-dot sd-amber"></span></div>
+        <div class="sec-row"><span>Read-only (reporting)</span><span class="status-dot sd-amber"></span></div>
+      </div>
+
+      <div class="sec-card">
+        <div class="sec-card-title">Patient data field-level security</div>
+        <div class="sec-row"><span>View patient identity</span><span style="font-size:11px;color:var(--color-text-tertiary)">Admin only</span></div>
+        <div class="sec-row"><span>Export patient records</span><span style="font-size:11px;color:var(--color-text-tertiary)">Admin only</span></div>
+        <div class="sec-row"><span>Edit session notes</span><span style="font-size:11px;color:var(--color-text-tertiary)">Staff + Admin</span></div>
+        <div class="sec-row"><span>View supervisor notes</span><span style="font-size:11px;color:var(--color-text-tertiary)">Supervisor + Admin</span></div>
+      </div>
+
+      <div class="sec-card">
+        <div class="sec-card-title">HIPAA requirements checklist</div>
+        <div class="sec-row"><span>Business Associate Agreement (BAA)</span><span class="status-dot sd-amber"></span></div>
+        <div class="sec-row"><span>Salesforce Shield / Health Cloud edition</span><span class="status-dot sd-amber"></span></div>
+        <div class="sec-row"><span>Audit trail (login + data access)</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>Data encryption at rest</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>MFA enforced for all users</span><span class="status-dot sd-green"></span></div>
+      </div>
+
+      <div class="sec-card">
+        <div class="sec-card-title">Data de-identification approach</div>
+        <div class="sec-row"><span>Patient object uses internal ID</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>PHI not stored on Match record</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>Feedback testimonials reviewed before publish</span><span class="status-dot sd-green"></span></div>
+        <div class="sec-row"><span>Session notes access controlled</span><span class="status-dot sd-green"></span></div>
+      </div>
+
+    </div>
+    <div style="background:var(--color-background-warning,#FAEEDA);border-radius:var(--border-radius-md);padding:10px 14px;font-size:12px;color:var(--color-text-warning,#854F0B);line-height:1.6;">
+      ⚠️ Salesforce is not HIPAA-compliant by default. VPEd must sign a BAA and use the correct edition (e.g. Health Cloud or Salesforce Shield) before going live with patient data.
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel" id="panel-dashboard">
+    <div class="section-label" style="margin-bottom:12px">Operational dashboards — real-time visibility</div>
+
+    <div class="dash-grid">
+      <div class="metric-card">
+        <div class="metric-label">Active universities</div>
+        <div class="metric-value">14</div>
+        <div class="metric-sub">+3 in pilot</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Students awaiting match</div>
+        <div class="metric-value">9</div>
+        <div class="metric-sub">2 flagged &gt;7 days</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Sessions this month</div>
+        <div class="metric-value">62</div>
+        <div class="metric-sub">↑ 18% vs last month</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg. feedback score</div>
+        <div class="metric-value">4.7</div>
+        <div class="metric-sub">Out of 5.0</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Students by status</div>
+      <div class="bar-row"><div class="bar-label">Inquiry</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#B4B2A9;"></div></div><div class="bar-count">12</div></div>
+      <div class="bar-row"><div class="bar-label">Applied</div><div class="bar-track"><div class="bar-fill" style="width:25%;background:#85B7EB;"></div></div><div class="bar-count">10</div></div>
+      <div class="bar-row"><div class="bar-label">Qualified</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#5DCAA5;"></div></div><div class="bar-count">7</div></div>
+      <div class="bar-row"><div class="bar-label">Awaiting match</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#EF9F27;"></div></div><div class="bar-count">9</div></div>
+      <div class="bar-row"><div class="bar-label">Matched</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#AFA9EC;"></div></div><div class="bar-count">20</div></div>
+      <div class="bar-row"><div class="bar-label">Scheduled</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:#F0997B;"></div></div><div class="bar-count">15</div></div>
+      <div class="bar-row"><div class="bar-label">Completed</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#97C459;"></div></div><div class="bar-count">40</div></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">University pipeline breakdown</div>
+      <div class="bar-row"><div class="bar-label">Prospect</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:#B4B2A9;"></div></div><div class="bar-count">9</div></div>
+      <div class="bar-row"><div class="bar-label">Contacted</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#85B7EB;"></div></div><div class="bar-count">6</div></div>
+      <div class="bar-row"><div class="bar-label">Demo scheduled</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#5DCAA5;"></div></div><div class="bar-count">4</div></div>
+      <div class="bar-row"><div class="bar-label">Pilot</div><div class="bar-track"><div class="bar-fill" style="width:15%;background:#EF9F27;"></div></div><div class="bar-count">3</div></div>
+      <div class="bar-row"><div class="bar-label">Active</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:#97C459;"></div></div><div class="bar-count">14</div></div>
+      <div class="bar-row"><div class="bar-label">Renewal</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:#AFA9EC;"></div></div><div class="bar-count">2</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+function showDetail(type, stage, desc) {
+  document.getElementById('detail-uni').textContent = desc;
+}
+function showStudentDetail(stage, desc) {
+  document.getElementById('detail-stu').textContent = desc;
+}
+</script>
