@@ -1,0 +1,22 @@
+{
+  "name": "vped-salesforce-crm",
+  "version": "1.0.0",
+  "description": "VPEd Salesforce CRM implementation blueprint — data architecture, lifecycle pipelines, Flow Builder automations, and HIPAA-aligned security controls for a virtual patient education platform.",
+  "main": "src/generate-presentation.js",
+  "scripts": {
+    "generate": "node src/generate-presentation.js"
+  },
+  "keywords": [
+    "salesforce",
+    "crm",
+    "healthcare",
+    "hipaa",
+    "pptxgenjs",
+    "virtual-patient-education"
+  ],
+  "author": "Davenport University — TECH 489 Consulting Team",
+  "license": "MIT",
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}
